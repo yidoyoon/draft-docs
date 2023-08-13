@@ -119,6 +119,34 @@ sudo cloudflared start &
 
 이후 Tunnel 대시보드에서 Tunnel 상태 확인
 
+### 접속
+
+**One-liner**
+
+`SSH_TUNNEL_CNAME`에 SSH 접근용 CNAME으로 설정한 주소를 넣는다.
+
+```shell
+ssh -o "ProxyCommand=/usr/local/bin/cloudflared access ssh" -o "StrictHostKeyChecking no" -i ~/.ssh/ssh ubuntu@<SSH_TUNNEL_URL>
+```
+
+**config**
+
+`~/.ssh/ssh`의 내용을 아래와 같이 작성한다.
+
+```shell
+Host staging
+        StrictHostKeyChecking no
+        IdentityFile ~/.ssh/ssh
+        HostName <SSH_TUNNEL_URL>
+        ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+        User <USER_NAME>
+```
+
+이후 아래 명령어로 접속한다.
+
+```shell
+ssh staging
+```
 
 ## 관련 오류
 
@@ -127,4 +155,3 @@ sudo cloudflared start &
 ```shell
 │ Error: error creating Access Application for zones "56999d098ed5fec2b0cca446026a9897": error from makeRequest: Authentication error (10000)
 ```
-
